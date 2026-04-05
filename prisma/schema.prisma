@@ -4,11 +4,49 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
   moduleFormat = "esm"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+enum Status {
+  scheduled
+  live
+  finished
+}
+
+model Match {
+  id           String       @id @default(uuid())
+  sport        String
+  homeTeam     String
+  awayTeam     String
+  status       Status       @default(scheduled)
+  startTime    DateTime?
+  endTime      DateTime?
+  homeScore    Int          @default(0)
+  awaScore     Int          @default(0)
+  createdAt    DateTime     @default(now())
+  commentaries Commentary[]
+}
+
+model Commentary {
+  id      String @id @default(uuid())
+  minute Int
+  sequence Int
+  period String
+  eventType String
+  actor String
+  team String
+  message String
+  metadata Json
+  tags String[]
+  createdAt DateTime @default(now())
+  match   Match  @relation(fields: [matchId], references: [id])
+  matchId String
+
+  @@index([matchId])
 }
