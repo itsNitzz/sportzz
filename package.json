@@ -1,20 +1,22 @@
 {
   "name": "sportzz",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node -w dist/index.js",
+    "start": "node dist/index.js",
+    "prisma:migrate": "npx prisma migrate dev",
+    "prisma:generate": "npx prisma generate"
   },
   "keywords": [],
-  "author": "",
+  "author": "Nityanand",
   "license": "ISC",
   "description": "",
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/node": "^25.5.2",
     "@types/pg": "^8.20.0",
-    "i": "^0.3.7",
     "prisma": "^7.6.0",
     "tsx": "^4.21.0",
     "typescript": "^6.0.2"
