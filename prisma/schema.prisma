@@ -28,7 +28,7 @@ model Match {
   startTime    DateTime?
   endTime      DateTime?
   homeScore    Int          @default(0)
-  awaScore     Int          @default(0)
+  awayScore     Int          @default(0)
   createdAt    DateTime     @default(now())
   commentaries Commentary[]
 }
