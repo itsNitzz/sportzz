@@ -16,7 +16,7 @@ router.get("/", async (req: Request, res: Response) => {
   if (!validation.success) {
     return res.status(400).json({
       message: "Invalid query.",
-      error: JSON.stringify(validation.error),
+      error: validation.error.issues,
     });
   }
   const limit = Math.min(validation.data.limit ?? 50, MAX_LIMIT);
@@ -42,7 +42,7 @@ router.post("/", async (req, res) => {
   if (!validationResponse.success) {
     return res.status(400).json({
       message: "Invalid match data",
-      error: JSON.stringify(validationResponse.error),
+      error: validationResponse.error.issues,
     });
   }
 
@@ -62,6 +62,11 @@ router.post("/", async (req, res) => {
       },
     });
     res.status(201).json({ data: dbResonse });
+    try {
+      res.app.locals.broadcastMatchCreated?.(dbResonse);
+    } catch (broadcastError) {
+      console.error("Failed to broadcast match_created", broadcastError);
+    }
   } catch (e) {
     res.status(500).json({
       message: "Server error: Failed to create match",
