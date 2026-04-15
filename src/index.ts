@@ -4,12 +4,14 @@ import { createServer } from "node:http";
 import matchRouter from "./routes/match-routes.js";
 import { attachWebsocketServer } from "./websocket/server.js";
 import CONFIG from "./config/env-variables.js";
+import { securityMiddleware } from "./config/arcject-security.js";
 
 const app = express();
 const server = createServer(app);
 
 app.use(express.json());
 
+app.use(securityMiddleware());
 app.use("/match", matchRouter);
 
 const { broadcastMatch } = attachWebsocketServer(server);
