@@ -2,6 +2,7 @@ import type { IncomingMessage, Server, ServerResponse } from "http";
 import { WebSocketServer, WebSocket, type Server as WSServer } from "ws";
 
 import type { Match } from "../validation/matches.js";
+import { wsArcjet } from "../config/arcject-security.js";
 
 export function attachWebsocketServer(
   server: Server<typeof IncomingMessage, typeof ServerResponse>,
@@ -12,7 +13,31 @@ export function attachWebsocketServer(
     maxPayload: 1024 * 1024,
   });
 
-  wss.on("connection", (socket) => {
+  wss.on("connection", async (socket, req) => {
+    if (wsArcjet) {
+      try {
+        const decision = await wsArcjet.protect(req);
+        if (decision.isDenied()) {
+          let code = 0;
+          let reason = "";
+
+          if (decision.reason.isRateLimit()) {
+            code = 1013;
+            reason = "Rate limit exceeded";
+          } else {
+            code = 1008;
+            reason = "Access denied";
+          }
+
+          socket.close(code, reason);
+          return;
+        }
+      } catch (e) {
+        console.error(e);
+        socket.close(1011, "Server security error.");
+        return;
+      }
+    }
     sendJSON(socket, { type: "welcome" });
 
     socket.on("error", console.error);
