@@ -1,7 +1,7 @@
 import type { NextFunction, Response, Request } from "express";
 import arcjet, { detectBot, shield, slidingWindow } from "@arcjet/node";
 
-import CONFIG from "./env-variables";
+import CONFIG from "./env-variables.js";
 
 const arcjetMode = CONFIG.ARCJET_MODE === "DRY_RUN" ? "DRY_RUN" : "LIVE";
 
@@ -32,10 +32,10 @@ export const wsArcjet = CONFIG.ARCJET_KEY
         shield({
           mode: arcjetMode,
         }),
-        detectBot({
-          mode: arcjetMode,
-          allow: ["CATEGORY:SEARCH_ENGINE", "CATEGORY:PREVIEW"],
-        }),
+        // detectBot({
+        //   mode: arcjetMode,
+        //   allow: ["CATEGORY:SEARCH_ENGINE", "CATEGORY:PREVIEW"],
+        // }),
         slidingWindow({
           mode: arcjetMode,
           interval: 2,
