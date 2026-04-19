@@ -46,3 +46,4 @@ export const updateScoreSchema = z.object({
 });
 
 export type Match = z.infer<typeof createMatchSchema>;
+export type MatchParam = z.infer<typeof matchIdParamSchema>;
